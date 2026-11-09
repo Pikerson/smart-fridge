@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#176b57">
+  <meta name="description" content="برنامه زمان‌بندی و پیگیری پروژه یخچال هوشمند">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon-192.png">
+  <title>برنامه پروژه یخچال هوشمند</title>
+  <style>
+    :root{color-scheme:light;--green:#176b57;--green2:#e7f4ef;--ink:#172b27;--muted:#667873;--line:#e1e9e6;--bg:#f4f8f6;--white:#fff}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,"Segoe UI",sans-serif;line-height:1.8}
+    .wrap{max-width:760px;margin:auto;padding:18px 14px 40px}
+    header{background:linear-gradient(135deg,#176b57,#248b70);color:white;border-radius:22px;padding:22px 20px;margin-bottom:16px;box-shadow:0 8px 24px #176b5722}
+    h1{font-size:22px;margin:0 0 5px} header p{margin:0;color:#e3f4ed;font-size:13px}
+    .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+    .stat,.card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:14px}
+    .stat strong{display:block;font-size:23px;color:var(--green)}.stat span{font-size:12px;color:var(--muted)}
+    .progress{height:9px;background:#e8efec;border-radius:99px;overflow:hidden;margin-top:9px}.bar{height:100%;width:0;background:var(--green);transition:width .2s}
+    .section-title{font-size:16px;margin:20px 2px 10px}
+    .task{display:flex;gap:12px;align-items:flex-start;background:white;border:1px solid var(--line);border-radius:15px;padding:13px;margin-bottom:9px}
+    .task input{width:21px;height:21px;accent-color:var(--green);margin:5px 0 0;flex:none}
+    .task .body{flex:1}.task h3{font-size:14px;margin:0 0 3px}.task p{font-size:12px;color:var(--muted);margin:0}
+    .task.done{background:#f0f8f4}.task.done h3{text-decoration:line-through;color:#6a8179}
+    .tag{display:inline-block;font-size:11px;background:var(--green2);color:var(--green);padding:2px 9px;border-radius:20px;margin-top:7px}
+    .note{font-size:12px;color:var(--muted);background:#fff8e8;border:1px solid #f0e2bd;border-radius:13px;padding:12px;margin-top:16px}
+    button{border:0;border-radius:12px;padding:11px 15px;font:inherit;font-size:13px;cursor:pointer}
+    .primary{background:var(--green);color:white}.secondary{background:#edf2ef;color:var(--ink)}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+    footer{text-align:center;color:var(--muted);font-size:11px;margin-top:22px}
+    @media(min-width:600px){.wrap{padding:26px 20px}.task{padding:16px}h1{font-size:25px}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>یخچال هوشمند من</h1>
+    <p>برنامه زمان‌بندی و پیگیری مراحل پروژه · آبان تا اسفند ۱۴۰۵</p>
+  </header>
+  <div class="stats">
+    <div class="stat"><strong id="doneCount">۰ از ۱۲</strong><span>بخش‌های انجام‌شده</span></div>
+    <div class="stat"><strong id="percent">۰٪</strong><span>پیشرفت کل پروژه</span><div class="progress"><div class="bar" id="bar"></div></div></div>
+  </div>
+  <h2 class="section-title">مراحل پروژه</h2>
+  <main id="tasks"></main>
+  <div class="note">وضعیت تیک‌ها روی همین گوشی ذخیره می‌شود. برای ذخیره و نصب پایدار، برنامه را از یک نشانی HTTPS باز کن. این نسخه برنامه‌ریز پروژه است و به آردوینو یا سنسورها وصل نیست.</div>
+  <div class="actions">
+    <button class="primary" id="installBtn" hidden>نصب روی گوشی</button>
+    <button class="secondary" id="resetBtn">پاک‌کردن تیک‌ها</button>
+  </div>
+  <footer>نسخهٔ همراه پروژه · داده‌ها فقط در مرورگر همین دستگاه ذخیره می‌شوند</footer>
+</div>
+<script>
+const tasks = [
+ ["تحقیق و بررسی ایده و قطعات","۲ هفته","آبان"],
+ ["طراحی نقشه مدار و اتصالات","۱ هفته","آبان"],
+ ["یادگیری برنامه‌نویسی آردوینو و کار با سنسورها","۵ هفته","آبان تا آذر"],
+ ["طراحی مکانیکی جایگاه تخم‌مرغ و سکوی وزن‌کشی","۱ هفته","آذر"],
+ ["ساخت و آزمایش مدار شمارش ۱۲ تخم‌مرغ","۳ هفته","آذر تا دی"],
+ ["راه‌اندازی لودسل و سنسور دما","۳ هفته","دی"],
+ ["برنامه‌نویسی و ساخت اپلیکیشن","۴ هفته","دی تا بهمن"],
+ ["اتصال آردوینو، ESP8266 و SIM800C","۳ هفته","بهمن"],
+ ["ساخت و مونتاژ نهایی دستگاه","۲ هفته","اوایل اسفند"],
+ ["اتصال کامل اپلیکیشن و راه‌اندازی هشدار پیامکی","۱ هفته","نیمه اسفند"],
+ ["آزمایش نهایی و رفع ایرادات","۲ هفته","اواخر اسفند"],
+ ["مستندسازی و آماده‌سازی برای ارائه","۱ هفته","پایان اسفند"]
+];
+const key="smart-fridge-plan-v1";
+let checked=JSON.parse(localStorage.getItem(key)||"[]");
+const fa=n=>new Intl.NumberFormat("fa-IR").format(n);
+function render(){
+ const root=document.getElementById("tasks"); root.innerHTML="";
+ tasks.forEach((t,i)=>{
+  const label=document.createElement("label"); label.className="task"+(checked.includes(i)?" done":"");
+  const cb=document.createElement("input");cb.type="checkbox";cb.checked=checked.includes(i);
+  cb.addEventListener("change",()=>{checked=cb.checked?[...checked,i]:checked.filter(x=>x!==i);localStorage.setItem(key,JSON.stringify(checked));render()});
+  const body=document.createElement("div");body.className="body";
+  const h=document.createElement("h3");h.textContent=`بخش ${fa(i+1)}: ${t[0]}`;
+  const p=document.createElement("p");p.textContent=`مدت: ${t[1]}`;
+  const tag=document.createElement("span");tag.className="tag";tag.textContent=`زمان: ${t[2]}`;
+  body.append(h,p,tag);label.append(cb,body);root.append(label);
+ });
+ document.getElementById("doneCount").textContent=`${fa(checked.length)} از ۱۲`;
+ const pct=Math.round(checked.length/12*100);
+ document.getElementById("percent").textContent=`${fa(pct)}٪`;
+ document.getElementById("bar").style.width=pct+"%";
+}
+render();
+document.getElementById("resetBtn").addEventListener("click",()=>{if(confirm("همه تیک‌های انجام‌شده پاک شوند؟")){checked=[];localStorage.removeItem(key);render()}});
+let deferredPrompt;
+const installBtn=document.getElementById("installBtn");
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;installBtn.hidden=false});
+installBtn.addEventListener("click",async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBtn.hidden=true});
+if("serviceWorker" in navigator && location.protocol.startsWith("http")) window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
